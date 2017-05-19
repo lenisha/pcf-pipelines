@@ -1,0 +1,20 @@
+---
+
+platform: linux
+
+image_resource:
+  type: docker-image
+  source: {repository: 10.240.199.202/cloudfoundry/cflinuxfs2}
+
+params:
+  OPS_MGR_HOST:
+  OPS_MGR_USR:
+  OPS_MGR_PWD:
+  OM_DECRYPTION_PWD:
+
+inputs:
+  - name: pcf-pipelines
+  - name: tool-om
+
+run:
+  path: pcf-pipelines/tasks/config-opsman/task.sh

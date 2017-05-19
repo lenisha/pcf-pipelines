@@ -16,14 +16,21 @@ resource_types:
 - name: pivnet
   type: docker-image
   source:
-    repository: pivotalcf/pivnet-resource
-    tag: latest-final
+    repository: parasubvert/pivnet-resource
+    tag: latest
+
+- name: github-release
+  type: docker-image
+  source:
+    repository: parasubvert/github-release-resource
+    tag: latest
 
 resources:
 - name: pivnet-opsmgr
   type: pivnet
   check_every: {{check_new_opsman_every}}
   source:
+    skip_ssl_verification: true
     api_token: {{pivnet_token}}
     product_slug: ops-manager
     product_version: {{opsman_major_minor_version}}
@@ -32,6 +39,7 @@ resources:
 - name: tool-cliaas
   type: github-release
   source:
+    skip_ssl_verification: true
     user: pivotal-cf 
     repository: cliaas
     access_token: {{github_token}}
@@ -39,6 +47,7 @@ resources:
 - name: tool-om
   type: github-release
   source:
+    skip_ssl_verification: true
     user: pivotal-cf
     repository: om
     access_token: {{github_token}}
@@ -46,6 +55,7 @@ resources:
 - name: tool-pivnet-cli
   type: github-release
   source:
+    skip_ssl_verification: true
     user: pivotal-cf
     repository: pivnet-cli
     access_token: {{github_token}}
@@ -53,6 +63,7 @@ resources:
 - name: pcf-pipelines
   type: git
   source:
+    skip_ssl_verification: true
     uri: https://github.com/pivotal-cf/pcf-pipelines.git
     branch: master
     username: {{github_token}}
@@ -95,12 +106,12 @@ jobs:
       params:
         globs: ["*linux*"]
 
-  - task: wait-opsman-clear
-    file: pcf-pipelines/tasks/wait-opsman-clear/task.yml
-    params:
-      OPSMAN_USERNAME: {{opsman_admin_username}}
-      OPSMAN_PASSWORD: {{opsman_admin_password}}
-      OPSMAN_URI: {{opsman_uri}}
+#  - task: wait-opsman-clear
+#    file: pcf-pipelines/tasks/wait-opsman-clear/task.yml
+#    params:
+#      OPSMAN_USERNAME: {{opsman_admin_username}}
+#      OPSMAN_PASSWORD: {{opsman_admin_password}}
+#      OPSMAN_URI: {{opsman_uri}}
 
   - aggregate:
     - task: export-opsmgr-settings

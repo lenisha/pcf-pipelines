@@ -2,12 +2,6 @@
 
 set -e
 
-OM_CMD=./tool-om/om-linux
-chmod +x tool-om/om-linux
-
-chmod +x jq/jq
-PATH=$PWD/jq:$PATH
-
 json_file_path="pcf-pipelines/tasks/install-ert/json_templates/${pcf_iaas}/${terraform_template}"
 json_file_template="${json_file_path}/ert-template.json"
 
@@ -35,7 +29,7 @@ domains=$(cat <<-EOF
   {"domains": ["*.${system_domain}", "*.login.${system_domain}", "*.uaa.${system_domain}"] }
 EOF
 )
-saml_cert_response=`$OM_CMD -t $ops_mgr_host -u $pcf_opsman_admin -p $pcf_opsman_admin_passwd -k curl -p "/api/v0/certificates/generate" -x POST -d "$domains"`
+saml_cert_response=`om-linux -t $ops_mgr_host -u $pcf_opsman_admin -p $pcf_opsman_admin_passwd -k curl -p "/api/v0/certificates/generate" -x POST -d "$domains"`
 saml_cert_pem=$(echo $saml_cert_response | jq --raw-output '.certificate')
 saml_key_pem=$(echo $saml_cert_response | jq --raw-output '.key')
 
@@ -132,6 +126,12 @@ db_creds=(
   db_uaa_password
   db_ccdb_username
   db_ccdb_password
+  db_accountdb_username
+  db_accountdb_password
+  db_networkpolicyserverdb_username
+  db_networkpolicyserverdb_password
+  db_nfsvolumedb_username
+  db_nfsvolumedb_password  
 )
 
 for i in "${db_creds[@]}"

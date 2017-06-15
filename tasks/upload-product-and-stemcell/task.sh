@@ -4,7 +4,7 @@ if [[ ! -z "$NO_PROXY" ]]; then
   echo "$OM_IP $OPS_MGR_HOST" >> /etc/hosts
 fi
 
-local pivnet-cli=`ls tool-pivnet-cli/pivnet-linux-* 2>/dev/null`
+pivnet-cli=`ls tool-pivnet-cli/pivnet-linux-* 2>/dev/null`
 chmod +x $pivnet-cli
 
 echo "Checking for needed stemcell in metadata"

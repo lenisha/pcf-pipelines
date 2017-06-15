@@ -20,6 +20,7 @@ image_resource:
   source: {repository: 10.240.199.202/czero/cflinuxfs2, insecure_registries: ["10.240.199.202"]}
 
 inputs:
+  - name: tool-pivnet-cli
   - name: pcf-pipelines
   - name: diagnostic-report
 

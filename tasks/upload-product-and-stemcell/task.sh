@@ -4,9 +4,9 @@ if [[ ! -z "$NO_PROXY" ]]; then
   echo "$OM_IP $OPS_MGR_HOST" >> /etc/hosts
 fi
 
-export pivnet-cli=`ls tool-pivnet-cli/pivnet-linux-* 2>/dev/null`
-echo "chmoding pivnet-cli"
-chmod +x $pivnet-cli
+pivnet=`ls tool-pivnet-cli/pivnet-linux-* 2>/dev/null`
+echo "chmoding $pivnet"
+chmod +x $pivnet
 
 echo "Checking for needed stemcell in metadata"
 STEMCELL_VERSION=`cat ./pivnet-product/metadata.json | jq --raw-output '.Dependencies[] | select(.Release.Product.Name | contains("Stemcells")) | .Release.Version'`
@@ -32,8 +32,8 @@ if [ -n "$STEMCELL_VERSION" ]; then
 
   if [[ -z "$stemcell" ]]; then
     echo "Downloading stemcell $STEMCELL_VERSION"
-    $pivnet-cli -k login --api-token="$PIVNET_API_TOKEN"
-    $pivnet-cli -k download-product-files -p stemcells -r $STEMCELL_VERSION -g $STEMCELL_GLOB --accept-eula
+    $pivnet -k login --api-token="$PIVNET_API_TOKEN"
+    $pivnet -k download-product-files -p stemcells -r $STEMCELL_VERSION -g $STEMCELL_GLOB --accept-eula
 
     SC_FILE_PATH=`find ./ -name *.tgz`
 

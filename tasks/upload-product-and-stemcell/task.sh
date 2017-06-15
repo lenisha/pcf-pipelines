@@ -5,6 +5,7 @@ if [[ ! -z "$NO_PROXY" ]]; then
 fi
 
 export pivnet-cli=`ls tool-pivnet-cli/pivnet-linux-* 2>/dev/null`
+echo "chmoding pivnet-cli"
 chmod +x $pivnet-cli
 
 echo "Checking for needed stemcell in metadata"

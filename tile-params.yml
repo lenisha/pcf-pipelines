@@ -1,4 +1,9 @@
 ---
+  opsman_uri:
+  opsman_admin_username:
+  opsman_admin_password:
+  pivnet_token:
+  github_token:
   om_host:
   om_usr:
   om_pwd:

@@ -1,0 +1,22 @@
+---
+
+platform: linux
+
+image_resource:
+  type: docker-image
+  source: {repository: virtmerlin/nsx-edge-gen-worker}
+
+params:
+  OPS_MGR_HOST:
+  OPS_MGR_USR:
+  OPS_MGR_PWD:
+  NETWORK_NAME:
+  TILE_AZ_SCS_SINGLETON:
+  TILE_AZS_SCS:
+
+inputs:
+  - name: concourse-vsphere
+  - name: om-cli
+
+run:
+  path: concourse-vsphere/tasks/config-scs/task.sh

@@ -127,14 +127,15 @@ DIRECTOR_CONFIG=$(cat <<-EOF
 EOF
 )
 
-SECURITY_CONFIG=$(cat <<-EOF
-{
-  "security_configuration": {
-    "generate_vm_passwords": $GENERATE_VM_PASSWORDS,
-    "trusted_certificates": "$TRUSTED_CERTIFICATES"
-  }
-}
-EOF
+SECURITY_CONFIG=$(
+  echo '{}' |
+  jq \
+    --arg trusted_certificates "$TRUSTED_CERTIFICATES" \
+    '. +
+    {
+      "trusted_certificates": $trusted_certificates,
+      "generate_vm_passwords": "true"
+    }'
 )
 
 INFRA_FIRST_AZ=$(echo $INFRA_AZS | jq --raw-output '.[0]')

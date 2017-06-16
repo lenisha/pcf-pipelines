@@ -1,0 +1,507 @@
+---
+groups:
+- name: full
+  jobs:
+  - upload-mysql-tile
+  - config-mysql-tile
+  - product-apply-changes-mysql
+  - upload-rabbit-tile
+  - config-rabbit-tile
+  - product-apply-changes-rabbit
+  - upload-scs-tile
+  - config-scs-tile
+  - product-apply-changes-scs
+  - upload-redis-tile
+  - upload-metrics-tile
+  - upload-sso-tile
+  - upload-dyna-tile
+  - upload-pcc-tile
+  
+- name: mysql
+  jobs:
+  - upload-mysql-tile
+  - config-mysql-tile
+  - product-apply-changes-mysql
+
+- name: rabbit
+  jobs:
+  - upload-rabbit-tile
+  - config-rabbit-tile
+  - product-apply-changes-rabbit
+
+- name: scs
+  jobs:
+  - upload-scs-tile
+  - config-scs-tile
+  - product-apply-changes-scs
+  
+- name: uploads-no-configs
+  jobs:
+  - upload-redis-tile
+  - upload-metrics-tile
+  - upload-sso-tile
+  - upload-dyna-tile
+  - upload-pcc-tile
+  
+resource_types:
+- name: pivnet
+  type: docker-image
+  source:
+    repository: 10.240.199.202/pivotalcf/pivnet-resource
+    tag: latest
+    insecure_registries: ["10.240.199.202"]
+
+- name: curl-resource
+  type: docker-image
+  source:
+    # repository: 10.240.199.202/parasubvert/github-release-resource
+    repository: 10.240.199.202/pivotalservices/concourse-curl-resource
+    tag: latest
+    insecure_registries: ["10.240.199.202"]
+ 
+ 
+resources:
+- name: pivnet-mysql-product
+  type: pivnet
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: p-mysql
+    product_version: '1\.8\..*'
+    sort_by: semver
+
+- name: pivnet-rabbit-product
+  type: pivnet
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: pivotal-rabbitmq-service
+    product_version: '1\.7\..*'
+    sort_by: semver
+
+- name: pivnet-scs-product
+  type: pivnet
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: p-spring-cloud-services
+    product_version: '1\.3\..*'
+    sort_by: semver
+
+- name: pivnet-metrics-product
+  type: pivnet
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: pcf-metrics
+    product_version: '1\.3\..*'
+    sort_by: semver
+
+- name: pivnet-redis-product
+  type: pivnet
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: p-redis
+    product_version: '1\.8\..*'
+    sort_by: semver
+    
+- name: pivnet-sso-product
+  type: pivnet
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: p-identity
+    product_version: '1\.8\..*'
+    sort_by: semver
+    
+- name: pivnet-dyna-product
+  type: pivnet
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: p-dynatrace
+    product_version: '1\.2\..*'
+    sort_by: semver
+    
+- name: pivnet-pcc-product
+  type: pivnet
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: p-cloudcache
+    product_version: '1\.0\..*'
+    sort_by: semver
+                
+    
+    
+- name: jq
+  type: curl-resource
+  source:
+    url: https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64
+    filename: jq
+    skip_ssl_verification: true
+ 
+- name: govc
+  type: curl-resource
+  source:
+    # user: vmware
+    # repository: govmomi
+    # access_token: {{github_token}}
+    url: "https://github.com/vmware/govmomi/releases/download/v0.14.0/govc_linux_amd64.gz"
+    filename: "govc_linux_amd64.gz"
+    skip_ssl_verification: true
+ 
+- name: pivnet-cli
+  type: curl-resource
+  source:
+    # user: pivotal-cf
+    # repository: pivnet-cli
+    # access_token: {{github_token}}
+    # skip_ssl_validation: true
+    url: "https://github.com/svrc-pivotal/pivnet-cli/releases/download/v0.0.49.svrc.3/pivnet-linux-amd64-0.0.49.svrc.3"
+    filename: "pivnet-linux-amd64-0.0.49"
+    skip_ssl_verification: true
+ 
+- name: pcf-pipelines
+  type: git
+  source:
+    uri: https://github.com/svrc-pivotal/pcf-pipelines
+    branch: master
+    username: {{github_token}}
+    skip_ssl_verification: true
+
+- name: elastic-runtime
+  type: pivnet
+  check_every: 4h
+  source:
+    api_token: {{pivnet_token}}
+    product_slug: elastic-runtime
+    product_version: ^1\.10\..*$
+    sort_by: semver   
+    skip_ssl_verification: true
+    
+jobs:
+
+
+- name: upload-redis-tile
+  plan:
+  - aggregate:
+    - get: pcf-pipelines
+    - get: pivnet-product
+      resource: pivnet-redis-product
+      params:
+        globs:
+        - "*.pivotal"
+    - get: tool-pivnet-cli
+      resource: pivnet-cli
+      params:
+        globs:
+        - "*linux-amd64*"
+
+  - task: upload-redis-tile
+    file: pcf-pipelines/tasks/upload-product-and-stemcell/task.yml
+    params:
+      STEMCELL_GLOB: "*vsphere*"
+      OPS_MGR_HOST: {{opsman_uri}}
+      OPS_MGR_USR: {{opsman_admin_username}}
+      OPS_MGR_PWD: {{opsman_admin_password}}
+      PIVNET_API_TOKEN: {{pivnet_token}}
+  
+      
+- name: upload-metrics-tile
+  plan:
+  - aggregate:
+    - get: pcf-pipelines
+    - get: pivnet-product
+      resource: pivnet-metrics-product
+      params:
+        globs:
+        - "*.pivotal"
+    - get: tool-pivnet-cli
+      resource: pivnet-cli
+      params:
+        globs:
+        - "*linux-amd64*"
+
+  - task: upload-metrics-tile
+    file: pcf-pipelines/tasks/upload-product-and-stemcell/task.yml
+    params:
+      STEMCELL_GLOB: "*vsphere*"
+      OPS_MGR_HOST: {{opsman_uri}}
+      OPS_MGR_USR: {{opsman_admin_username}}
+      OPS_MGR_PWD: {{opsman_admin_password}}
+      PIVNET_API_TOKEN: {{pivnet_token}}
+  
+      
+- name: upload-sso-tile
+  plan:
+  - aggregate:
+    - get: pcf-pipelines
+    - get: pivnet-product
+      resource: pivnet-sso-product
+      params:
+        globs:
+        - "*.pivotal"
+    - get: tool-pivnet-cli
+      resource: pivnet-cli
+      params:
+        globs:
+        - "*linux-amd64*"
+
+  - task: upload-sso-tile
+    file: pcf-pipelines/tasks/upload-product-and-stemcell/task.yml
+    params:
+      STEMCELL_GLOB: "*vsphere*"
+      OPS_MGR_HOST: {{opsman_uri}}
+      OPS_MGR_USR: {{opsman_admin_username}}
+      OPS_MGR_PWD: {{opsman_admin_password}}
+      PIVNET_API_TOKEN: {{pivnet_token}}
+  
+
+- name: upload-dyna-tile
+  plan:
+  - aggregate:
+    - get: pcf-pipelines
+    - get: pivnet-product
+      resource: pivnet-dyna-product
+      params:
+        globs:
+        - "*.pivotal"
+    - get: tool-pivnet-cli
+      resource: pivnet-cli
+      params:
+        globs:
+        - "*linux-amd64*"
+
+  - task: upload-dyna-tile
+    file: pcf-pipelines/tasks/upload-product-and-stemcell/task.yml
+    params:
+      STEMCELL_GLOB: "*vsphere*"
+      OPS_MGR_HOST: {{opsman_uri}}
+      OPS_MGR_USR: {{opsman_admin_username}}
+      OPS_MGR_PWD: {{opsman_admin_password}}
+      PIVNET_API_TOKEN: {{pivnet_token}}
+      NO_PROXY: {{company_proxy_domain}}
+      OM_IP: {{om_ip}}  
+          
+- name: upload-pcc-tile
+  plan:
+  - aggregate:
+    - get: pcf-pipelines
+    - get: pivnet-product
+      resource: pivnet-pcc-product
+      params:
+        globs:
+        - "*.pivotal"
+    - get: tool-pivnet-cli
+      resource: pivnet-cli
+      params:
+        globs:
+        - "*linux-amd64*"
+
+  - task: upload-pcc-tile
+    file: pcf-pipelines/tasks/upload-product-and-stemcell/task.yml
+    params:
+      STEMCELL_GLOB: "*vsphere*"
+      OPS_MGR_HOST: {{opsman_uri}}
+      OPS_MGR_USR: {{opsman_admin_username}}
+      OPS_MGR_PWD: {{opsman_admin_password}}
+      PIVNET_API_TOKEN: {{pivnet_token}}
+  
+
+
+###########
+## Mysql ##
+###########
+
+- name: upload-mysql-tile
+  plan:
+  - aggregate:
+    - get: pcf-pipelines
+    - get: pivnet-product
+      resource: pivnet-mysql-product
+      params:
+        globs:
+        - "*.pivotal"
+    - get: tool-pivnet-cli
+      resource: pivnet-cli
+      params:
+        globs:
+        - "*linux-amd64*"
+
+  - task: upload-mysql-tile
+    file: pcf-pipelines/tasks/upload-product-and-stemcell/task.yml
+    params:
+      STEMCELL_GLOB: "*vsphere*"
+      OPS_MGR_HOST: {{opsman_uri}}
+      OPS_MGR_USR: {{opsman_admin_username}}
+      OPS_MGR_PWD: {{opsman_admin_password}}
+      PIVNET_API_TOKEN: {{pivnet_token}}
+  
+
+
+- name: config-mysql-tile
+  plan:
+  - aggregate:
+    - get: pcf-pipelines
+      trigger: true
+      passed: [upload-mysql-tile]
+
+  - task: config-mysql-tile
+    file: pcf-pipelines/tasks/config-mysql/task.yml
+    params:
+      OPS_MGR_HOST: {{om_host}}
+      OPS_MGR_USR: {{om_usr}}
+      OPS_MGR_PWD: {{om_pwd}}
+      NETWORK_NAME: {{services_network_name}}
+      TILE_AZ_MYSQL_SINGLETON: {{tile_az_mysql_singleton}}
+      TILE_AZS_MYSQL: {{tile_azs_mysql}}
+      TILE_MYSQL_PROXY_IPS: {{tile_mysql_proxy_ips}}
+      TILE_MYSQL_PROXY_VIP: {{tile_mysql_proxy_vip}}
+      TILE_MYSQL_MONITOR_EMAIL: {{tile_mysql_monitor_email}}
+      TILE_MYSQL_PROXY_INSTANCES: {{tile_mysql_proxy_instances}}
+      TILE_MYSQL_BACKUP_PREPARE_INSTANCES: {{tile_mysql_backup_prepare_instances}}
+      TILE_MYSQL_MONITORING_INSTANCES: {{tile_mysql_monitoring_instances}}
+      TILE_MYSQL_BROKER_INSTANCES: {{tile_mysql_broker_instances}} 
+
+- name: product-apply-changes-mysql
+  plan:
+  - aggregate:
+    - get: pcf-pipelines
+      passed: [config-mysql-tile]
+      trigger: true
+
+  - task: apply-changes
+    file: pcf-pipelines/tasks/apply-changes/task.yml
+    params:
+      OPS_MGR_HOST: {{om_host}}
+      OPS_MGR_USR: {{om_usr}}
+      OPS_MGR_PWD: {{om_pwd}}
+
+############
+## Rabbit ##
+############
+
+- name: upload-rabbit-tile
+  plan:
+  - aggregate:
+    - get: pcf-pipelines
+      trigger: true
+      passed: [product-apply-changes-mysql]
+    - get: pivnet-product
+      resource: pivnet-rabbit-product
+      params:
+        globs:
+        - "*.pivotal"
+      passed: [product-apply-changes-mysql]
+    - get: tool-pivnet-cli
+      resource: pivnet-cli
+      params:
+        globs:
+        - "*linux-amd64*"
+
+  - task: upload-rabbit-tile
+    file: pcf-pipelines/tasks/upload-product-and-stemcell/task.yml
+    params:
+      STEMCELL_GLOB: "*vsphere*"
+      OPS_MGR_HOST: {{opsman_uri}}
+      OPS_MGR_USR: {{opsman_admin_username}}
+      OPS_MGR_PWD: {{opsman_admin_password}}
+      PIVNET_API_TOKEN: {{pivnet_token}}
+ 
+
+- name: config-rabbit-tile
+  plan:
+  - aggregate:
+    - get: pcf-pipelines
+      trigger: true
+      passed: [upload-rabbit-tile]
+
+  - task: config-rabbit-tile
+    file: pcf-pipelines/tasks/config-rabbit/task.yml
+    params:
+      OPS_MGR_HOST: {{om_host}}
+      OPS_MGR_USR: {{om_usr}}
+      OPS_MGR_PWD: {{om_pwd}}
+      NETWORK_NAME: {{services_network_name}}
+      TILE_AZ_RABBIT_SINGLETON: {{tile_az_rabbit_singleton}}
+      TILE_AZS_RABBIT: {{tile_azs_rabbit}}
+      TILE_RABBIT_PROXY_IPS: {{tile_rabbit_proxy_ips}}
+      TILE_RABBIT_PROXY_VIP: {{tile_rabbit_proxy_vip}}
+      TILE_RABBIT_ADMIN_USER: {{tile_rabbit_admin_user}}
+      TILE_RABBIT_ADMIN_PASSWD: {{tile_rabbit_admin_passwd}}
+      TILE_RABBIT_PROXY_INSTANCES: {{tile_rabbit_proxy_instances}}
+      TILE_RABBIT_SERVER_INSTANCES: {{tile_rabbit_server_instances}}
+
+- name: product-apply-changes-rabbit
+  plan:
+  - aggregate:
+    - get: pcf-pipelines
+      passed: [config-rabbit-tile]
+      trigger: true
+
+  - task: apply-changes
+    file: pcf-pipelines/tasks/apply-changes/task.yml
+    params:
+      OPS_MGR_HOST: {{om_host}}
+      OPS_MGR_USR: {{om_usr}}
+      OPS_MGR_PWD: {{om_pwd}}
+      
+ 
+############
+## SCS    ##
+############     
+
+- name: upload-scs-tile
+  plan:
+  - aggregate:
+    - get: pcf-pipelines
+      trigger: true
+      passed: [product-apply-changes-rabbit]
+    - get: pivnet-product
+      resource: pivnet-scs-product
+      params:
+        globs:
+        - "*.pivotal"
+    - get: tool-pivnet-cli
+      resource: pivnet-cli
+      params:
+        globs:
+        - "*linux-amd64*"
+
+  - task: upload-scs-tile
+    file: pcf-pipelines/tasks/upload-product-and-stemcell/task.yml
+    params:
+      STEMCELL_GLOB: "*vsphere*"
+      OPS_MGR_HOST: {{opsman_uri}}
+      OPS_MGR_USR: {{opsman_admin_username}}
+      OPS_MGR_PWD: {{opsman_admin_password}}
+      PIVNET_API_TOKEN: {{pivnet_token}}
+ 
+
+- name: config-scs-tile
+  plan:
+  - aggregate:
+    - get: pcf-pipelines
+      trigger: true
+      passed: [upload-scs-tile]
+    - get: om-cli
+      globs: om-linux
+      passed: [upload-scs-tile]
+
+  - task: config-scs-tile
+    file: pcf-pipelines/tasks/config-scs/task.yml
+    params:
+      OPS_MGR_HOST: {{om_host}}
+      OPS_MGR_USR: {{om_usr}}
+      OPS_MGR_PWD: {{om_pwd}}
+      NETWORK_NAME: {{services_network_name}}
+      TILE_AZ_SCS_SINGLETON: {{tile_az_scs_singleton}}
+      TILE_AZS_SCS: {{tile_azs_scs}}
+
+- name: product-apply-changes-scs
+  plan:
+  - aggregate:
+    - get: pcf-pipelines
+      passed: [config-scs-tile]
+      trigger: true
+
+  - task: apply-changes
+    file: pcf-pipelines/tasks/apply-changes/task.yml
+    params:
+      OPS_MGR_HOST: {{om_host}}
+      OPS_MGR_USR: {{om_usr}}
+      OPS_MGR_PWD: {{om_pwd}}

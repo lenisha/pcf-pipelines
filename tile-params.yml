@@ -1,0 +1,36 @@
+---
+  om_host:
+  om_usr:
+  om_pwd:
+  services_network_name:
+  tile_az_rabbit_singleton:
+  tile_azs_rabbit:
+  tile_rabbit_proxy_ips:
+  tile_rabbit_proxy_vip:
+  tile_rabbit_admin_user:
+  tile_rabbit_admin_passwd:
+  tile_rabbit_proxy_instances:
+  tile_rabbit_server_instances:
+  tile_az_scs_singleton:
+  tile_azs_scs:
+  tile_az_mysql_singleton:
+  tile_azs_mysql:
+  tile_mysql_proxy_ips:
+  tile_mysql_proxy_vip:
+  tile_mysql_monitor_email:
+  tile_mysql_proxy_instances:
+  tile_mysql_backup_prepare_instances:
+  tile_mysql_monitoring_instances:
+  tile_mysql_broker_instances: 
+  tile_az_rabbit_singleton:
+  tile_azs_rabbit:
+  tile_rabbit_proxy_ips:
+  tile_rabbit_proxy_vip:
+  tile_rabbit_admin_user:
+  tile_rabbit_admin_passwd:
+  tile_rabbit_proxy_instances:
+  tile_rabbit_server_instances:
+  tile_az_scs_singleton:
+  tile_azs_scs:
+      
+      

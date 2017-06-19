@@ -111,7 +111,7 @@ resources:
   source:
     api_token: {{pivnet_token}}
     product_slug: p-identity
-    product_version: '1\.8\..*'
+    product_version: '1\.3\..*'
     check_every: 12h
     sort_by: semver
     

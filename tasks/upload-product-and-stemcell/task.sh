@@ -1,15 +1,13 @@
 #!/bin/bash -e
 
-if [[ ! -z "$NO_PROXY" ]]; then
-  echo "$OM_IP $OPS_MGR_HOST" >> /etc/hosts
-fi
-
 pivnet=`ls tool-pivnet-cli/pivnet-linux-* 2>/dev/null`
 echo "chmoding $pivnet"
 chmod +x $pivnet
 
 echo "Checking for needed stemcell in metadata"
+ls ./pivnet-product
 STEMCELL_VERSION=`cat ./pivnet-product/metadata.json | jq --raw-output '.Dependencies[] | select(.Release.Product.Name | contains("Stemcells")) | .Release.Version'`
+echo "Stemcell version is $STEMCELL_VERSION"
 
 if [ -n "$STEMCELL_VERSION" ]; then
   echo "Stemcell not found in metadata; checking Ops Manager diagnostic report"

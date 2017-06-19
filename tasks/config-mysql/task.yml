@@ -25,4 +25,4 @@ inputs:
   - name: pcf-pipelines
 
 run:
-  path: concourse-vsphere/tasks/config-mysql/task.sh
+  path: pcf-pipelines/tasks/config-mysql/task.sh

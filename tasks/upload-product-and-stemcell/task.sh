@@ -9,7 +9,7 @@ ls ./pivnet-product
 STEMCELL_VERSION=`cat ./pivnet-product/metadata.json | jq --raw-output '.Dependencies[] | select(.Release.Product.Name | contains("Stemcells")) | .Release.Version'`
 echo "Stemcell version is $STEMCELL_VERSION"
 
-if [ -n "$STEMCELL_VERSION" ]; then
+if [ ! -z "$STEMCELL_VERSION" ]; then
   echo "Stemcell not found in metadata; checking Ops Manager diagnostic report"
   diagnostic_report=$(
     om-linux \

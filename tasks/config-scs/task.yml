@@ -4,7 +4,7 @@ platform: linux
 
 image_resource:
   type: docker-image
-  source: {repository: virtmerlin/nsx-edge-gen-worker}
+  source: {repository: 10.240.199.202/czero/cflinuxfs2, insecure_registries: ["10.240.199.202"]}
 
 params:
   OPS_MGR_HOST:
@@ -15,7 +15,7 @@ params:
   TILE_AZS_SCS:
 
 inputs:
-  - name: concourse-vsphere
+  - name: pcf-pipelines
   - name: om-cli
 
 run:

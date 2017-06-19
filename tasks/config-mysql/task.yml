@@ -23,7 +23,6 @@ params:
 
 inputs:
   - name: pcf-pipelines
-  - name: om-cli
 
 run:
   path: concourse-vsphere/tasks/config-mysql/task.sh

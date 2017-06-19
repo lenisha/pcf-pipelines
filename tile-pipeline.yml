@@ -346,9 +346,10 @@ jobs:
   - task: apply-changes
     file: pcf-pipelines/tasks/apply-changes/task.yml
     params:
-      OPS_MGR_HOST: {{om_host}}
-      OPS_MGR_USR: {{om_usr}}
-      OPS_MGR_PWD: {{om_pwd}}
+      params:
+        OPSMAN_USERNAME: {{om_usr}}
+        OPSMAN_PASSWORD: {{om_pwd}}
+        OPSMAN_URI: {{om_host}}
 
 ############
 ## Rabbit ##
@@ -414,9 +415,9 @@ jobs:
   - task: apply-changes
     file: pcf-pipelines/tasks/apply-changes/task.yml
     params:
-      OPS_MGR_HOST: {{om_host}}
-      OPS_MGR_USR: {{om_usr}}
-      OPS_MGR_PWD: {{om_pwd}}
+      OPSMAN_USERNAME: {{om_usr}}
+      OPSMAN_PASSWORD: {{om_pwd}}
+      OPSMAN_URI: {{om_host}}
       
  
 ############
@@ -477,6 +478,6 @@ jobs:
   - task: apply-changes
     file: pcf-pipelines/tasks/apply-changes/task.yml
     params:
-      OPS_MGR_HOST: {{om_host}}
-      OPS_MGR_USR: {{om_usr}}
-      OPS_MGR_PWD: {{om_pwd}}
+      OPSMAN_USERNAME: {{om_usr}}
+      OPSMAN_PASSWORD: {{om_pwd}}
+      OPSMAN_URI: {{om_host}}

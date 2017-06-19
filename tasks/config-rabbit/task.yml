@@ -22,7 +22,6 @@ params:
   
 inputs:
   - name: pcf-pipelines
-  - name: om-cli
 
 run:
-  path: concourse-vsphere/tasks/config-rabbit/task.sh
+  path: pcf-pipelines/tasks/config-rabbit/task.sh

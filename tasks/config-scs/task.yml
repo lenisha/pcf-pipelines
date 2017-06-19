@@ -16,7 +16,6 @@ params:
 
 inputs:
   - name: pcf-pipelines
-  - name: om-cli
 
 run:
-  path: concourse-vsphere/tasks/config-scs/task.sh
+  path: pcf-pipelines/tasks/config-scs/task.sh

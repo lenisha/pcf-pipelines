@@ -9,8 +9,8 @@ ls ./pivnet-product
 STEMCELL_VERSION=`cat ./pivnet-product/metadata.json | jq --raw-output '.Dependencies[] | select(.Release.Product.Name | contains("Stemcells")) | .Release.Version'`
 echo "Stemcell version is $STEMCELL_VERSION"
 
-if [[ -z "$STEMCELL_VERSION" ]]; then
-  echo "Stemcell not found in metadata; checking Ops Manager diagnostic report"
+if [ -n "$STEMCELL_VERSION" ]; then
+  echo "Downloading diagnostic report"
   diagnostic_report=$(
     om-linux \
       --target https://$OPS_MGR_HOST \
@@ -24,14 +24,14 @@ if [[ -z "$STEMCELL_VERSION" ]]; then
     echo $diagnostic_report |
     jq \
       --arg version "$STEMCELL_VERSION" \
-      --arg glob "${STEMCELL_GLOB//\*/}" \
+      --arg glob "$IAAS" \
     '.stemcells[] | select(contains($version) and contains($glob))'
   )
 
   if [[ -z "$stemcell" ]]; then
     echo "Downloading stemcell $STEMCELL_VERSION"
     $pivnet -k login --api-token="$PIVNET_API_TOKEN"
-    $pivnet -k download-product-files -p stemcells -r $STEMCELL_VERSION -g $STEMCELL_GLOB --accept-eula
+    $pivnet -k download-product-files -p stemcells -r $STEMCELL_VERSION -g "*${IAAS}*" --accept-eula
 
     SC_FILE_PATH=`find ./ -name *.tgz`
 
@@ -45,8 +45,6 @@ if [[ -z "$STEMCELL_VERSION" ]]; then
     echo "Removing downloaded stemcell $STEMCELL_VERSION"
     rm $SC_FILE_PATH
   fi
-  
-  echo "Finished stemcells"
 fi
 
 echo "Uploading product"

@@ -175,7 +175,7 @@ jobs:
   - task: upload-redis-tile
     file: pcf-pipelines/tasks/upload-product-and-stemcell/task.yml
     params:
-      STEMCELL_GLOB: "*vsphere*"
+      IAAS: "vsphere"
       OPS_MGR_HOST: {{opsman_uri}}
       OPS_MGR_USR: {{opsman_admin_username}}
       OPS_MGR_PWD: {{opsman_admin_password}}
@@ -200,7 +200,7 @@ jobs:
   - task: upload-metrics-tile
     file: pcf-pipelines/tasks/upload-product-and-stemcell/task.yml
     params:
-      STEMCELL_GLOB: "*vsphere*"
+      IAAS: "vsphere"
       OPS_MGR_HOST: {{opsman_uri}}
       OPS_MGR_USR: {{opsman_admin_username}}
       OPS_MGR_PWD: {{opsman_admin_password}}
@@ -225,7 +225,7 @@ jobs:
   - task: upload-sso-tile
     file: pcf-pipelines/tasks/upload-product-and-stemcell/task.yml
     params:
-      STEMCELL_GLOB: "*vsphere*"
+      IAAS: "vsphere"
       OPS_MGR_HOST: {{opsman_uri}}
       OPS_MGR_USR: {{opsman_admin_username}}
       OPS_MGR_PWD: {{opsman_admin_password}}
@@ -250,7 +250,7 @@ jobs:
   - task: upload-dyna-tile
     file: pcf-pipelines/tasks/upload-product-and-stemcell/task.yml
     params:
-      STEMCELL_GLOB: "*vsphere*"
+      IAAS: "vsphere"
       OPS_MGR_HOST: {{opsman_uri}}
       OPS_MGR_USR: {{opsman_admin_username}}
       OPS_MGR_PWD: {{opsman_admin_password}}
@@ -274,7 +274,7 @@ jobs:
   - task: upload-pcc-tile
     file: pcf-pipelines/tasks/upload-product-and-stemcell/task.yml
     params:
-      STEMCELL_GLOB: "*vsphere*"
+      IAAS: "vsphere"
       OPS_MGR_HOST: {{opsman_uri}}
       OPS_MGR_USR: {{opsman_admin_username}}
       OPS_MGR_PWD: {{opsman_admin_password}}
@@ -304,7 +304,7 @@ jobs:
   - task: upload-mysql-tile
     file: pcf-pipelines/tasks/upload-product-and-stemcell/task.yml
     params:
-      STEMCELL_GLOB: "*vsphere*"
+      IAAS: "vsphere"
       OPS_MGR_HOST: {{opsman_uri}}
       OPS_MGR_USR: {{opsman_admin_username}}
       OPS_MGR_PWD: {{opsman_admin_password}}
@@ -375,7 +375,7 @@ jobs:
   - task: upload-rabbit-tile
     file: pcf-pipelines/tasks/upload-product-and-stemcell/task.yml
     params:
-      STEMCELL_GLOB: "*vsphere*"
+      IAAS: "vsphere"
       OPS_MGR_HOST: {{opsman_uri}}
       OPS_MGR_USR: {{opsman_admin_username}}
       OPS_MGR_PWD: {{opsman_admin_password}}
@@ -444,7 +444,7 @@ jobs:
   - task: upload-scs-tile
     file: pcf-pipelines/tasks/upload-product-and-stemcell/task.yml
     params:
-      STEMCELL_GLOB: "*vsphere*"
+      IAAS: "vsphere"
       OPS_MGR_HOST: {{opsman_uri}}
       OPS_MGR_USR: {{opsman_admin_username}}
       OPS_MGR_PWD: {{opsman_admin_password}}

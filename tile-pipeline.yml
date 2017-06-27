@@ -47,17 +47,15 @@ resource_types:
 - name: pivnet
   type: docker-image
   source:
-    repository: 10.240.199.202/pivotalcf/pivnet-resource
+    repository: pivotalcf/pivnet-resource
     tag: latest
-    insecure_registries: ["10.240.199.202"]
-
+  
 - name: curl-resource
   type: docker-image
   source:
     # repository: 10.240.199.202/parasubvert/github-release-resource
-    repository: 10.240.199.202/pivotalservices/concourse-curl-resource
+    repository: pivotalservices/concourse-curl-resource
     tag: latest
-    insecure_registries: ["10.240.199.202"]
  
  
 resources:
@@ -149,9 +147,9 @@ resources:
 - name: pcf-pipelines
   type: git
   source:
-    uri: https://github.com/svrc-pivotal/pcf-pipelines
+    uri: https://github.com/lenisha/pcf-pipelines
     branch: master
-    username: {{github_token}}
+    private_key: {{github_token}}
     skip_ssl_verification: true
 
 jobs:
@@ -360,7 +358,7 @@ jobs:
   - aggregate:
     - get: pcf-pipelines
       trigger: true
-      passed: [product-apply-changes-mysql]
+      #passed: [product-apply-changes-mysql]
     - get: pivnet-product
       resource: pivnet-rabbit-product
       params:

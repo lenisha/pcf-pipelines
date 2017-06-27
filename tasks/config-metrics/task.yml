@@ -1,0 +1,27 @@
+---
+
+platform: linux
+
+image_resource:
+  type: docker-image
+  source: {repository: czero/cflinuxfs2 }
+
+params:
+  OPS_MGR_HOST:
+  OPS_MGR_USR:
+  OPS_MGR_PWD:
+  NETWORK_NAME:
+  TILE_AZ_RABBIT_SINGLETON:
+  TILE_AZS_RABBIT:
+  TILE_RABBIT_PROXY_IPS:
+  TILE_RABBIT_PROXY_VIP:
+  TILE_RABBIT_ADMIN_USER:
+  TILE_RABBIT_ADMIN_PASSWD:
+  TILE_RABBIT_PROXY_INSTANCES:
+  TILE_RABBIT_SERVER_INSTANCES:
+  
+inputs:
+  - name: pcf-pipelines
+
+run:
+  path: pcf-pipelines/tasks/config-rabbit/task.sh

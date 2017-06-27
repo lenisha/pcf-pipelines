@@ -465,6 +465,9 @@ jobs:
       NETWORK_NAME: {{services_network_name}}
       TILE_AZ_SCS_SINGLETON: {{tile_az_scs_singleton}}
       TILE_AZS_SCS: {{tile_azs_scs}}
+      SCS_MAX_INSTANCES: {{tile_scs_max_instance}}
+      SCS_SKIP_SSL_VALIDATION: {{tile_scs_skip_ssl_validation}}
+      SCS_APP_PUSH_TIMEOUT_MINUTES: {{tile_scs_push_timeout}}
 
 - name: product-apply-changes-scs
   plan:

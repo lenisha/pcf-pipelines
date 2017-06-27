@@ -69,6 +69,9 @@
   tile_rabbit_server_instances: 1
   tile_az_scs_singleton: AZ1
   tile_azs_scs: AZ1
+  tile_scs_push_timeout: 6
+  tile_scs_skip_ssl_validation: false
+  tile_scs_max_instance: 200
   tile_az_mysql_singleton: AZ1
   tile_azs_mysql: AZ1
   tile_mysql_proxy_ips:

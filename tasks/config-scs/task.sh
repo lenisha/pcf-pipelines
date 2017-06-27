@@ -35,5 +35,22 @@ EOF
 
 
 
+TILE_PROPERTIES=$(cat <<-EOF
+{
+  ".deploy-service-broker.broker_max_instances": {
+    "value": ${SCS_MAX_INSTANCES:-100}
+  },
+  #".deploy-service-broker.buildpack": {
+  #  "value": "$SCS_BROKER_APP_BUILDPACK"
+  #},
+  ".deploy-service-broker.disable_cert_check": {
+    "value": ${SCS_SKIP_SSL_VALIDATION:-false}
+  },
+  ".deploy-service-broker.instances_app_push_timeout": {
+    "value": ${SCS_APP_PUSH_TIMEOUT_MINUTES:-null}
+  }
+}
+EOF
+)
 
-om-linux -t https://$OPS_MGR_HOST -u $OPS_MGR_USR -p $OPS_MGR_PWD -k configure-product -n $PRODUCT_NAME -pn "$NETWORK"
+om-linux -t https://$OPS_MGR_HOST -u $OPS_MGR_USR -p $OPS_MGR_PWD -k configure-product -n $PRODUCT_NAME -p "$PROPERTIES" -pn "$NETWORK"

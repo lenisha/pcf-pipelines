@@ -4,7 +4,7 @@ platform: linux
 
 image_resource:
   type: docker-image
-  source: {repository: 10.240.199.202/czero/cflinuxfs2, insecure_registries: ["10.240.199.202"]}
+  source: {repository: czero/cflinuxfs2 }
 
 params:
   OPS_MGR_HOST:
@@ -13,6 +13,10 @@ params:
   NETWORK_NAME:
   TILE_AZ_SCS_SINGLETON:
   TILE_AZS_SCS:
+  SCS_MAX_INSTANCES:
+  SCS_BROKER_APP_BUILDPACK:
+  SCS_SKIP_SSL_VALIDATION:
+  SCS_APP_PUSH_TIMEOUT_MINUTES:
 
 inputs:
   - name: pcf-pipelines

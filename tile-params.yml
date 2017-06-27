@@ -1,41 +1,82 @@
 ---
-  opsman_uri:
-  opsman_admin_username:
-  opsman_admin_password:
-  pivnet_token:
-  github_token:
-  om_host:
-  om_usr:
-  om_pwd:
-  services_network_name:
-  tile_az_rabbit_singleton:
-  tile_azs_rabbit:
+  opsman_uri: opsmgr.haas-53.pez.pivotal.io
+  opsman_admin_username: admin
+  opsman_admin_password: admin
+  pivnet_token: QZ1VkjsyMpSCEAL5hWKR
+  github_token: |
+    -----BEGIN RSA PRIVATE KEY-----
+    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
+    -----END RSA PRIVATE KEY-----
+  om_host: opsmgr.haas-53.pez.pivotal.io
+  om_usr: admin
+  om_pwd: admin
+  services_network_name: default
+  tile_az_rabbit_singleton: AZ1
+  tile_azs_rabbit: AZ1
   tile_rabbit_proxy_ips:
   tile_rabbit_proxy_vip:
-  tile_rabbit_admin_user:
-  tile_rabbit_admin_passwd:
-  tile_rabbit_proxy_instances:
-  tile_rabbit_server_instances:
-  tile_az_scs_singleton:
-  tile_azs_scs:
-  tile_az_mysql_singleton:
-  tile_azs_mysql:
+  tile_rabbit_admin_user: admin
+  tile_rabbit_admin_passwd: admin
+  tile_rabbit_proxy_instances: 1
+  tile_rabbit_server_instances: 1
+  tile_az_scs_singleton: AZ1
+  tile_azs_scs: AZ1
+  tile_az_mysql_singleton: AZ1
+  tile_azs_mysql: AZ1
   tile_mysql_proxy_ips:
   tile_mysql_proxy_vip:
   tile_mysql_monitor_email:
-  tile_mysql_proxy_instances:
-  tile_mysql_backup_prepare_instances:
-  tile_mysql_monitoring_instances:
-  tile_mysql_broker_instances: 
-  tile_az_rabbit_singleton:
-  tile_azs_rabbit:
-  tile_rabbit_proxy_ips:
-  tile_rabbit_proxy_vip:
-  tile_rabbit_admin_user:
-  tile_rabbit_admin_passwd:
-  tile_rabbit_proxy_instances:
-  tile_rabbit_server_instances:
-  tile_az_scs_singleton:
-  tile_azs_scs:
-      
+  tile_mysql_proxy_instances: 2
+  tile_mysql_backup_prepare_instances: 1
+  tile_mysql_monitoring_instances: 0
+  tile_mysql_broker_instances: 2
+       
       

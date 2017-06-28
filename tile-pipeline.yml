@@ -267,10 +267,9 @@ jobs:
   - task: apply-changes
     file: pcf-pipelines/tasks/apply-changes/task.yml
     params:
-      params:
-        OPSMAN_USERNAME: {{om_usr}}
-        OPSMAN_PASSWORD: {{om_pwd}}
-        OPSMAN_URI: {{om_host}}
+      OPSMAN_USERNAME: {{om_usr}}
+      OPSMAN_PASSWORD: {{om_pwd}}
+      OPSMAN_URI: {{om_host}}
   
   
 

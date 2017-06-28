@@ -14,6 +14,8 @@ groups:
   - upload-redis-tile
   - upload-metrics-tile
   - upload-sso-tile
+  - config-sso-tile
+  - product-apply-changes-sso 
   - upload-dyna-tile
   - upload-pcc-tile
   
@@ -35,11 +37,16 @@ groups:
   - config-scs-tile
   - product-apply-changes-scs
   
+ - name: sso
+  jobs:
+  - upload-sso-tile
+  - config-sso-tile
+  - product-apply-changes-sso 
+  
 - name: uploads-no-configs
   jobs:
   - upload-redis-tile
   - upload-metrics-tile
-  - upload-sso-tile
   - upload-dyna-tile
   - upload-pcc-tile
   

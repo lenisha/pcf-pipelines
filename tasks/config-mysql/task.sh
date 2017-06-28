@@ -62,6 +62,9 @@ PROPERTIES=$(cat <<-EOF
   },
   ".properties.optional_protections.enable.recipient_email": {
     "value": "$TILE_MYSQL_MONITOR_EMAIL"
+  },
+  ".properties.syslog": {
+    "value": "disabled"
   }
 }
 EOF

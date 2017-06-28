@@ -81,5 +81,6 @@
   tile_mysql_backup_prepare_instances: 1
   tile_mysql_monitoring_instances: 0
   tile_mysql_broker_instances: 2
-       
+  tile_azs_sso: AZ1
+  tile_az_sso_singleton: AZ1     
       

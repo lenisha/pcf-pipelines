@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -eux
 
 
 export ROOT_DIR=`pwd`

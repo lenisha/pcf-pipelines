@@ -401,7 +401,7 @@ jobs:
   plan:
   - aggregate:
     - get: pcf-pipelines
-      trigger: true
+      #trigger: true
       #passed: [product-apply-changes-mysql]
     - get: pivnet-product
       resource: pivnet-rabbit-product

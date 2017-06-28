@@ -36,8 +36,8 @@ groups:
   - upload-scs-tile
   - config-scs-tile
   - product-apply-changes-scs
-  
- - name: sso
+
+- name: sso
   jobs:
   - upload-sso-tile
   - config-sso-tile
@@ -210,7 +210,10 @@ jobs:
       OPS_MGR_USR: {{opsman_admin_username}}
       OPS_MGR_PWD: {{opsman_admin_password}}
       PIVNET_API_TOKEN: {{pivnet_token}}
-  
+
+#########
+## SSO ##
+#########      
       
 - name: upload-sso-tile
   plan:
@@ -235,6 +238,40 @@ jobs:
       OPS_MGR_USR: {{opsman_admin_username}}
       OPS_MGR_PWD: {{opsman_admin_password}}
       PIVNET_API_TOKEN: {{pivnet_token}}
+  
+- name: config-sso-tile
+  plan:
+  - aggregate:
+    - get: pcf-pipelines
+      trigger: true
+      passed: [upload-sso-tile]
+
+  - task: config-sso-tile
+    file: pcf-pipelines/tasks/config-sso/task.yml
+    params:
+      OPS_MGR_HOST: {{om_host}}
+      OPS_MGR_USR: {{om_usr}}
+      OPS_MGR_PWD: {{om_pwd}}
+      NETWORK_NAME: {{services_network_name}}
+      TILE_AZ_SSO_SINGLETON: {{tile_az_sso_singleton}}
+      TILE_AZS_SSO: {{tile_azs_sso}}
+     
+
+- name: product-apply-changes-sso
+  plan:
+  - aggregate:
+    - get: pcf-pipelines
+      passed: [config-sso-tile]
+      trigger: true
+
+  - task: apply-changes
+    file: pcf-pipelines/tasks/apply-changes/task.yml
+    params:
+      params:
+        OPSMAN_USERNAME: {{om_usr}}
+        OPSMAN_PASSWORD: {{om_pwd}}
+        OPSMAN_URI: {{om_host}}
+  
   
 
 - name: upload-dyna-tile

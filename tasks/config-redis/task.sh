@@ -18,6 +18,11 @@ function fn_get_azs {
      echo $azs_csv | awk -F "," -v braceopen='{' -v braceclose='}' -v name='"name":' -v quote='"' -v OFS='"},{"name":"' '$1=$1 {print braceopen name quote $0 quote braceclose}'
 }
 
+function fn_json_string_array {
+  local cslist=$1
+  echo $cslist | awk -F "[ \t]*,[ \t]*" -v bracketopen='[' -v bracketclose=']' -v quote='"'  -v OFS='","' '$1=$1 {print bracketopen quote $0 quote bracketclose}'
+}
+
 TILE_AVAILABILITY_ZONES=$(fn_get_azs $TILE_AZS_REDIS)
 
 
@@ -31,19 +36,20 @@ NETWORK=$(cat <<-EOF
   ],
   "network": {
     "name": "$NETWORK_NAME"
-  }
-  "service network": {
-    "name": "$NETWORK_NAME"
+  },
+  "service_network": {
+    "name": "$TILE_SERVICE_NETWORK_NAME"
   }
 }
 EOF
 )
 
+AZ_PLACEMENT=$(fn_json_string_array "$TILE_AZ_REDIS_PLAN")
 
 PROPERTIES=$(cat <<-EOF
 {
   ".properties.small_plan_selector.active.az_single_select": {
-    "value": "$TILE_AZ_REDIS_SINGLETON"
+    "value": $AZ_PLACEMENT
   },
   ".properties.small_plan_selector.active.vm_type": {
     "value": "large.disk" 

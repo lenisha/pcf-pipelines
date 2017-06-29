@@ -119,7 +119,7 @@ resources:
   source:
     api_token: {{pivnet_token}}
     product_slug: p-redis
-    product_version: '1\.7\..*'
+    product_version: '1\.8\..*'
     check_every: 12h
     sort_by: semver
     
@@ -207,9 +207,10 @@ jobs:
       OPS_MGR_USR: {{om_usr}}
       OPS_MGR_PWD: {{om_pwd}}
       NETWORK_NAME: {{services_network_name}}
+      TILE_SERVICE_NETWORK_NAME: {{tile_redis_service_network}}
       TILE_AZ_REDIS_SINGLETON: {{tile_az_redis_singleton}}
       TILE_AZS_REDIS: {{tile_azs_redis}}
-     
+      TILE_AZ_REDIS_PLAN: {{tile_az_redis_plan}}
 
 - name: product-apply-changes-redis
   plan:
@@ -267,11 +268,11 @@ jobs:
       OPS_MGR_HOST: {{om_host}}
       OPS_MGR_USR: {{om_usr}}
       OPS_MGR_PWD: {{om_pwd}}
-      NETWORK_NAME: {{services_network_name}}
+      NETWORK_NAME: {{tile_azs_metrics_network}}
       TILE_AZ_METRICS_SINGLETON: {{tile_az_metrics_singleton}}
       TILE_AZS_METRICS: {{tile_azs_metrics}}
       TILE_METRICS_ALERT_EMAIL: {{tile_metrics_alert_email}}
-
+      
 - name: product-apply-changes-metrics
   plan:
   - aggregate:
@@ -522,7 +523,7 @@ jobs:
   plan:
   - aggregate:
     - get: pcf-pipelines
-      passed: [product-apply-changes-rabbit,product-apply-changes-mysql]
+      #passed: [product-apply-changes-rabbit,product-apply-changes-mysql]
     - get: pivnet-product
       resource: pivnet-scs-product
       params:

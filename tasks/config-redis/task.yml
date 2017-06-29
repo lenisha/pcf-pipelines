@@ -13,7 +13,8 @@ params:
   NETWORK_NAME:
   TILE_AZ_REDIS_SINGLETON:
   TILE_AZS_REDIS:
- 
+  TILE_SERVICE_NETWORK_NAME:
+  TILE_AZ_REDIS_PLAN:
   
 inputs:
   - name: pcf-pipelines

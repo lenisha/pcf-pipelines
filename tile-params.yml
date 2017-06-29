@@ -85,7 +85,10 @@
   tile_az_sso_singleton: AZ1  
   tile_az_metrics_singleton: AZ1
   tile_azs_metrics: AZ1
+  tile_azs_metrics_network: default     #DEPLOYMENT
+  tile_metrics_alert_email: eee@ggg.com
   tile_az_redis_singleton: AZ1
   tile_azs_redis: AZ1  
-  tile_metrics_alert_email: eee@ggg.com
+  tile_az_redis_plan: AZ1
+  tile_redis_service_network: default  #DYNAMIC 
       

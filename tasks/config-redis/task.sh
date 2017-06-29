@@ -49,13 +49,13 @@ AZ_PLACEMENT=$(fn_json_string_array "$TILE_AZ_REDIS_PLAN")
 PROPERTIES=$(cat <<-EOF
 {
   ".properties.small_plan_selector.active.az_single_select": {
-    "value": $AZ_PLACEMENT
+    "value": "$TILE_AZ_REDIS_PLAN"
   },
   ".properties.small_plan_selector.active.vm_type": {
     "value": "large.disk" 
   },
   ".properties.small_plan_selector.active.disk_size": {
-    "value": "30 GB"
+    "value": "30720"
   },
   ".properties.medium_plan_selector": {
     "value": "Plan Inactive"

@@ -11,17 +11,12 @@ params:
   OPS_MGR_USR:
   OPS_MGR_PWD:
   NETWORK_NAME:
-  TILE_AZ_RABBIT_SINGLETON:
-  TILE_AZS_RABBIT:
-  TILE_RABBIT_PROXY_IPS:
-  TILE_RABBIT_PROXY_VIP:
-  TILE_RABBIT_ADMIN_USER:
-  TILE_RABBIT_ADMIN_PASSWD:
-  TILE_RABBIT_PROXY_INSTANCES:
-  TILE_RABBIT_SERVER_INSTANCES:
+  TILE_AZ_METRICS_SINGLETON:
+  TILE_AZS_METRICS:
+ 
   
 inputs:
   - name: pcf-pipelines
 
 run:
-  path: pcf-pipelines/tasks/config-rabbit/task.sh
+  path: pcf-pipelines/tasks/config-metrics/task.sh

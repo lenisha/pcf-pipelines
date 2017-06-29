@@ -132,14 +132,7 @@ resources:
     check_every: 12h
     sort_by: semver
     
-- name: pivnet-dyna-product
-  type: pivnet
-  source:
-    api_token: {{pivnet_token}}
-    product_slug: p-dynatrace
-    product_version: '1\.2\..*'
-    sort_by: semver
-    check_every: 12h
+
     
 - name: pivnet-pcc-product
   type: pivnet
@@ -206,7 +199,7 @@ jobs:
   - aggregate:
     - get: pcf-pipelines
       passed: [upload-redis-tile]
-      
+      trigger: true
   - task: config-redis-tile
     file: pcf-pipelines/tasks/config-redis/task.yml
     params:
@@ -223,7 +216,7 @@ jobs:
   - aggregate:
     - get: pcf-pipelines
       passed: [config-redis-tile]
-  
+      trigger: true
   - task: apply-changes
     file: pcf-pipelines/tasks/apply-changes/task.yml
     params:
@@ -267,7 +260,7 @@ jobs:
   - aggregate:
     - get: pcf-pipelines
       passed: [upload-metrics-tile]
-      
+      trigger: true
   - task: config-metrics-tile
     file: pcf-pipelines/tasks/config-metrics/task.yml
     params:
@@ -284,7 +277,7 @@ jobs:
   - aggregate:
     - get: pcf-pipelines
       passed: [config-metrics-tile]
-      
+      trigger: true
 
   - task: apply-changes
     file: pcf-pipelines/tasks/apply-changes/task.yml
@@ -328,7 +321,7 @@ jobs:
   - aggregate:
     - get: pcf-pipelines
       passed: [upload-sso-tile]
-
+      trigger: true
   - task: config-sso-tile
     file: pcf-pipelines/tasks/config-sso/task.yml
     params:
@@ -345,7 +338,7 @@ jobs:
   - aggregate:
     - get: pcf-pipelines
       passed: [config-sso-tile]
-    
+      trigger: true 
   - task: apply-changes
     file: pcf-pipelines/tasks/apply-changes/task.yml
     params:
@@ -445,7 +438,7 @@ jobs:
   - aggregate:
     - get: pcf-pipelines
       passed: [config-mysql-tile]
-   
+      trigger: true
   - task: apply-changes
     file: pcf-pipelines/tasks/apply-changes/task.yml
     params:
@@ -490,7 +483,7 @@ jobs:
   - aggregate:
     - get: pcf-pipelines
       passed: [upload-rabbit-tile]
-
+      trigger: true
   - task: config-rabbit-tile
     file: pcf-pipelines/tasks/config-rabbit/task.yml
     params:
@@ -512,7 +505,7 @@ jobs:
   - aggregate:
     - get: pcf-pipelines
       passed: [config-rabbit-tile]
-  
+      trigger: true
   - task: apply-changes
     file: pcf-pipelines/tasks/apply-changes/task.yml
     params:

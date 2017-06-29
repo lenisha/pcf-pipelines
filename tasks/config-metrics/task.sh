@@ -6,7 +6,7 @@ set -eux
 export ROOT_DIR=`pwd`
 export SCRIPT_DIR=$(dirname $0)
 
-TILE_RELEASE=`om-linux -t https://$OPS_MGR_HOST -u $OPS_MGR_USR -p $OPS_MGR_PWD -k available-products | grep p-metrics`
+TILE_RELEASE=`om-linux -t https://$OPS_MGR_HOST -u $OPS_MGR_USR -p $OPS_MGR_PWD -k available-products | grep apm`
 
 PRODUCT_NAME=`echo $TILE_RELEASE | cut -d"|" -f2 | tr -d " "`
 PRODUCT_VERSION=`echo $TILE_RELEASE | cut -d"|" -f3 | tr -d " "`
@@ -36,6 +36,16 @@ NETWORK=$(cat <<-EOF
 EOF
 )
 
+PROPERTIES=$(cat <<-EOF
+{
+  ".mysql_monitor.notifications_email": {
+    "value": "$TILE_METRICS_ALERT_EMAIL"
+  }
+}
+EOF
+)
 
 
-om-linux -t https://$OPS_MGR_HOST -u $OPS_MGR_USR -p $OPS_MGR_PWD -k configure-product -n $PRODUCT_NAME  -pn "$NETWORK" 
+
+
+om-linux -t https://$OPS_MGR_HOST -u $OPS_MGR_USR -p $OPS_MGR_PWD -k configure-product -n $PRODUCT_NAME  -pn "$NETWORK" -p "$PROPERTIES"

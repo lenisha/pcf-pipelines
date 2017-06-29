@@ -87,4 +87,5 @@
   tile_azs_metrics: AZ1
   tile_az_redis_singleton: AZ1
   tile_azs_redis: AZ1  
+  tile_metrics_alert_email: eee@ggg.com
       

@@ -270,7 +270,7 @@ jobs:
       NETWORK_NAME: {{services_network_name}}
       TILE_AZ_METRICS_SINGLETON: {{tile_az_metrics_singleton}}
       TILE_AZS_METRICS: {{tile_azs_metrics}}
-     
+      TILE_METRICS_ALERT_EMAIL: {{tile_metrics_alert_email}}
 
 - name: product-apply-changes-metrics
   plan:

@@ -6,7 +6,7 @@ set -e
 export ROOT_DIR=`pwd`
 export SCRIPT_DIR=$(dirname $0)
 
-TILE_RELEASE=`om-linux -t https://$OPS_MGR_HOST -u $OPS_MGR_USR -p $OPS_MGR_PWD -k available-products | grep p-rabbitmq`
+TILE_RELEASE=`om-linux -t https://$OPS_MGR_HOST -u $OPS_MGR_USR -p $OPS_MGR_PWD -k available-products | grep p-redis`
 
 PRODUCT_NAME=`echo $TILE_RELEASE | cut -d"|" -f2 | tr -d " "`
 PRODUCT_VERSION=`echo $TILE_RELEASE | cut -d"|" -f3 | tr -d " "`
@@ -18,13 +18,13 @@ function fn_get_azs {
      echo $azs_csv | awk -F "," -v braceopen='{' -v braceclose='}' -v name='"name":' -v quote='"' -v OFS='"},{"name":"' '$1=$1 {print braceopen name quote $0 quote braceclose}'
 }
 
-TILE_AVAILABILITY_ZONES=$(fn_get_azs $TILE_AZS_RABBIT)
+TILE_AVAILABILITY_ZONES=$(fn_get_azs $TILE_AZS_REDIS)
 
 
 NETWORK=$(cat <<-EOF
 {
   "singleton_availability_zone": {
-    "name": "$TILE_AZ_RABBIT_SINGLETON"
+    "name": "$TILE_AZ_REDIS_SINGLETON"
   },
   "other_availability_zones": [
     $TILE_AVAILABILITY_ZONES
@@ -32,65 +32,35 @@ NETWORK=$(cat <<-EOF
   "network": {
     "name": "$NETWORK_NAME"
   }
+  "service network": {
+    "name": "$NETWORK_NAME"
+  }
 }
 EOF
 )
 
-# Use RABBITMQ_TILE_LBR_IP & RABBITMQ_TILE_STATIC_IPS from nsx-edge-list
-# PROPERTIES=$(cat <<-EOF
-# {
-#   ".rabbitmq-haproxy.static_ips": {
-#     "value": "$TILE_RABBIT_PROXY_IPS"
-#   },
-#   ".rabbitmq-server.server_admin_credentials": {
-#     "value": {
-#       "identity": "$TILE_RABBIT_ADMIN_USER",
-#       "password": "$TILE_RABBIT_ADMIN_PASSWD"
-#     }
-#   },
-#   ".rabbitmq-broker.dns_host": {
-#     "value": "$TILE_RABBIT_PROXY_VIP"
-#   },
-#   ".properties.metrics_tls_disabled": {
-#     "value": false
-#   }
-# }
-# EOF
-# )
 
 PROPERTIES=$(cat <<-EOF
 {
-  ".rabbitmq-haproxy.static_ips": {
-    "value": "$RABBITMQ_TILE_STATIC_IPS"
+  ".properties.small_plan_selector.active.az_single_select": {
+    "value": "$TILE_AZ_REDIS_SINGLETON"
   },
-  ".rabbitmq-server.server_admin_credentials": {
-    "value": {
-      "identity": "$TILE_RABBIT_ADMIN_USER",
-      "password": "$TILE_RABBIT_ADMIN_PASSWD"
-    }
+  ".properties.small_plan_selector.active.vm_type": {
+    "value": "large.disk" 
   },
-  ".rabbitmq-broker.dns_host": {
-    "value": "$RABBITMQ_TILE_LBR_IP"
+  ".properties.small_plan_selector.active.disk_size": {
+    "value": "30 GB"
   },
-  ".properties.metrics_tls_disabled": {
-    "value": false
+  ".properties.medium_plan_selector": {
+    "value": "Plan Inactive"
+  },
+  ".properties.large_plan_selector": {
+    "value": "Plan Inactive"
   }
 }
 EOF
 )
 
-RESOURCES=$(cat <<-EOF
-{
-  "rabbitmq-haproxy": {
-    "instance_type": {"id": "automatic"},
-    "instances" : $TILE_RABBIT_PROXY_INSTANCES
-  },
-  "rabbitmq-server": {
-    "instance_type": {"id": "automatic"},
-    "instances" : $TILE_RABBIT_SERVER_INSTANCES
-  }
-}
-EOF
-)
 
-om-linux -t https://$OPS_MGR_HOST -u $OPS_MGR_USR -p $OPS_MGR_PWD -k configure-product -n $PRODUCT_NAME -p "$PROPERTIES" -pn "$NETWORK" -pr "$RESOURCES"
+
+om-linux -t https://$OPS_MGR_HOST -u $OPS_MGR_USR -p $OPS_MGR_PWD -k configure-product -n $PRODUCT_NAME -p "$PROPERTIES" -pn "$NETWORK" 

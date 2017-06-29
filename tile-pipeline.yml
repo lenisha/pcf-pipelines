@@ -12,11 +12,14 @@ groups:
   - config-scs-tile
   - product-apply-changes-scs
   - upload-redis-tile
+  - config-redis-tile
+  - product-apply-changes-redis 
   - upload-metrics-tile
+  - config-metrics-tile
+  - product-apply-changes-metrics 
   - upload-sso-tile
   - config-sso-tile
   - product-apply-changes-sso 
-  - upload-dyna-tile
   - upload-pcc-tile
   
 - name: mysql
@@ -43,11 +46,20 @@ groups:
   - config-sso-tile
   - product-apply-changes-sso 
   
-- name: uploads-no-configs
+- name: redis
   jobs:
   - upload-redis-tile
+  - config-redis-tile
+  - product-apply-changes-redis 
+ 
+- name: metrics
+  jobs:
   - upload-metrics-tile
-  - upload-dyna-tile
+  - config-metrics-tile
+  - product-apply-changes-metrics 
+  
+- name: uploads-no-configs
+  jobs:
   - upload-pcc-tile
   
 resource_types:
@@ -107,7 +119,7 @@ resources:
   source:
     api_token: {{pivnet_token}}
     product_slug: p-redis
-    product_version: '1\.8\..*'
+    product_version: '1\.7\..*'
     check_every: 12h
     sort_by: semver
     
@@ -161,6 +173,9 @@ resources:
 
 jobs:
 
+#########
+## REDIS ##
+######### 
 
 - name: upload-redis-tile
   plan:
@@ -185,7 +200,43 @@ jobs:
       OPS_MGR_USR: {{opsman_admin_username}}
       OPS_MGR_PWD: {{opsman_admin_password}}
       PIVNET_API_TOKEN: {{pivnet_token}}
+      
+- name: config-redis-tile
+  plan:
+  - aggregate:
+    - get: pcf-pipelines
+      passed: [upload-redis-tile]
+      
+  - task: config-redis-tile
+    file: pcf-pipelines/tasks/config-redis/task.yml
+    params:
+      OPS_MGR_HOST: {{om_host}}
+      OPS_MGR_USR: {{om_usr}}
+      OPS_MGR_PWD: {{om_pwd}}
+      NETWORK_NAME: {{services_network_name}}
+      TILE_AZ_REDIS_SINGLETON: {{tile_az_redis_singleton}}
+      TILE_AZS_REDIS: {{tile_azs_redis}}
+     
+
+- name: product-apply-changes-redis
+  plan:
+  - aggregate:
+    - get: pcf-pipelines
+      passed: [config-redis-tile]
   
+  - task: apply-changes
+    file: pcf-pipelines/tasks/apply-changes/task.yml
+    params:
+      OPSMAN_USERNAME: {{om_usr}}
+      OPSMAN_PASSWORD: {{om_pwd}}
+      OPSMAN_URI: {{om_host}}
+  
+        
+      
+  
+#########
+## Metrics ##
+######### 
       
 - name: upload-metrics-tile
   plan:
@@ -210,6 +261,39 @@ jobs:
       OPS_MGR_USR: {{opsman_admin_username}}
       OPS_MGR_PWD: {{opsman_admin_password}}
       PIVNET_API_TOKEN: {{pivnet_token}}
+
+- name: config-metrics-tile
+  plan:
+  - aggregate:
+    - get: pcf-pipelines
+      passed: [upload-metrics-tile]
+      
+  - task: config-metrics-tile
+    file: pcf-pipelines/tasks/config-metrics/task.yml
+    params:
+      OPS_MGR_HOST: {{om_host}}
+      OPS_MGR_USR: {{om_usr}}
+      OPS_MGR_PWD: {{om_pwd}}
+      NETWORK_NAME: {{services_network_name}}
+      TILE_AZ_METRICS_SINGLETON: {{tile_az_metrics_singleton}}
+      TILE_AZS_METRICS: {{tile_azs_metrics}}
+     
+
+- name: product-apply-changes-metrics
+  plan:
+  - aggregate:
+    - get: pcf-pipelines
+      passed: [config-metrics-tile]
+      
+
+  - task: apply-changes
+    file: pcf-pipelines/tasks/apply-changes/task.yml
+    params:
+      OPSMAN_USERNAME: {{om_usr}}
+      OPSMAN_PASSWORD: {{om_pwd}}
+      OPSMAN_URI: {{om_host}}
+  
+        
 
 #########
 ## SSO ##
@@ -243,7 +327,6 @@ jobs:
   plan:
   - aggregate:
     - get: pcf-pipelines
-      trigger: true
       passed: [upload-sso-tile]
 
   - task: config-sso-tile
@@ -262,8 +345,7 @@ jobs:
   - aggregate:
     - get: pcf-pipelines
       passed: [config-sso-tile]
-      trigger: true
-
+    
   - task: apply-changes
     file: pcf-pipelines/tasks/apply-changes/task.yml
     params:
@@ -273,29 +355,10 @@ jobs:
   
   
 
-- name: upload-dyna-tile
-  plan:
-  - aggregate:
-    - get: pcf-pipelines
-    - get: pivnet-product
-      resource: pivnet-dyna-product
-      params:
-        globs:
-        - "*.pivotal"
-    - get: tool-pivnet-cli
-      resource: pivnet-cli
-      params:
-        globs:
-        - "*linux-amd64*"
 
-  - task: upload-dyna-tile
-    file: pcf-pipelines/tasks/upload-product-and-stemcell/task.yml
-    params:
-      IAAS: "vsphere"
-      OPS_MGR_HOST: {{opsman_uri}}
-      OPS_MGR_USR: {{opsman_admin_username}}
-      OPS_MGR_PWD: {{opsman_admin_password}}
-      PIVNET_API_TOKEN: {{pivnet_token}}
+#########
+## CACHE ##
+######### 
           
 - name: upload-pcc-tile
   plan:
@@ -382,8 +445,7 @@ jobs:
   - aggregate:
     - get: pcf-pipelines
       passed: [config-mysql-tile]
-      trigger: true
-
+   
   - task: apply-changes
     file: pcf-pipelines/tasks/apply-changes/task.yml
     params:
@@ -427,7 +489,6 @@ jobs:
   plan:
   - aggregate:
     - get: pcf-pipelines
-      trigger: true
       passed: [upload-rabbit-tile]
 
   - task: config-rabbit-tile
@@ -451,8 +512,7 @@ jobs:
   - aggregate:
     - get: pcf-pipelines
       passed: [config-rabbit-tile]
-      trigger: true
-
+  
   - task: apply-changes
     file: pcf-pipelines/tasks/apply-changes/task.yml
     params:
@@ -469,8 +529,7 @@ jobs:
   plan:
   - aggregate:
     - get: pcf-pipelines
-      trigger: true
-      passed: [product-apply-changes-rabbit]
+      passed: [product-apply-changes-rabbit,product-apply-changes-mysql]
     - get: pivnet-product
       resource: pivnet-scs-product
       params:
